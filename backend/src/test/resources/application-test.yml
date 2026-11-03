@@ -1,0 +1,15 @@
+# Overrides applied on top of application.yml when tests activate the "test" profile.
+server:
+  # Fixed port so the vendor client (configured via ${server.port}) can reach the mock vendor.
+  port: 18089
+
+vendor:
+  api-key: test-key
+  # Short timeout so the timeout scenario runs fast.
+  read-timeout: 500ms
+
+mock-vendor:
+  enabled: true
+  # No random failures, so tests are deterministic.
+  failure-rate: 0
+  timeout-delay: 2s

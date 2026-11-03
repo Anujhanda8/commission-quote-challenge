@@ -1,0 +1,65 @@
+# Application configuration. Every value here can be overridden without code changes, e.g. with an environment
+# variable (VENDOR_READTIMEOUT=10s overrides vendor.read-timeout) or a profile file such as application-prod.yml.
+
+spring:
+  application:
+    name: commission-quote
+  mvc:
+    # Don't let Spring log handled exceptions itself (DevTools turns this on): its messages can contain the rejected
+    # input. ApiExceptionHandler logs every handled error safely, with its error code.
+    log-resolved-exception: false
+
+server:
+  port: 8080
+
+# Only the health endpoint is exposed (used by the Docker health check); it shows UP/DOWN and no details.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+# Our client for the third-party Commission Quote API.
+# It points at the mock vendor hosted in this same app; change these values to use the real vendor.
+vendor:
+  base-url: http://localhost:${server.port}/vendor
+  quote-path: /commission-quotes
+  # Required: set the VENDOR_API_KEY environment variable. The empty default makes startup fail (the key must not be
+  # blank), so the app never runs with a missing or well-known key. The docker compose files set a local key.
+  api-key: ${VENDOR_API_KEY:}
+  connect-timeout: 5s
+  # How long we wait for the vendor to respond before returning 504 to the user.
+  read-timeout: 5s
+
+# Behaviour of the mock vendor (the stand-in for the real vendor API).
+mock-vendor:
+  # Off unless MOCK_VENDOR_ENABLED=true (the docker compose files turn it on), so a real deployment never exposes
+  # /vendor by accident. When off, none of the settings below are needed.
+  enabled: ${MOCK_VENDOR_ENABLED:false}
+  # The key the mock accepts: always the same setting our client sends (one source of truth), so the two can never
+  # differ, whichever way the key is provided.
+  api-key: ${vendor.api-key}
+  # Share of requests that fail at random with HTTP 500 (0 = never, 1 = always).
+  failure-rate: 0.2
+  # How long the vendor waits before answering a timeout-scenario request. Keep it longer than vendor.read-timeout.
+  timeout-delay: 10s
+  # Loan amounts that always trigger a specific outcome, for manual and automated testing.
+  scenarios:
+    error-amount: 1001
+    timeout-amount: 1002
+  # Commission rules. Rates are percentages (1.50 = 1.5%); quoted to keep the 2 decimal places.
+  commission:
+    base-rates:
+      LOW: "1.00"
+      MEDIUM: "1.50"
+      HIGH: "2.00"
+    # Terms longer than this many months get the long-term adjustment added to the rate.
+    long-term-threshold-months: 60
+    long-term-adjustment: "0.25"
+
+logging:
+  # Console only (no log file), one line per event, in a fixed format a log service can parse:
+  #   <UTC timestamp> <LEVEL> [req=<request ID>] [code=<error code>] <logger> - <message>
+  # Line breaks in messages are replaced, so a log line can't be forged (SecureLogger also cleans arguments).
+  pattern:
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSX,UTC} %-5level [req=%X{requestId:-}] [code=%X{errorCode:-}] %logger{40} - %replace(%msg){'[\\r\\n]+', ' '}%n"

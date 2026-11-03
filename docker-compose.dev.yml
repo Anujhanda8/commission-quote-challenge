@@ -1,0 +1,43 @@
+# Development mode: runs the dev servers on your mounted source code, with live reload.
+#   docker compose -f docker-compose.dev.yml up      ->  http://localhost:5173
+# Settings come from .env.
+services:
+  backend:
+    image: eclipse-temurin:${JAVA_VERSION}-jdk
+    working_dir: /workspace/backend
+    # 1. Compile once. 2. Recompile in the background whenever a file changes (continuous build; the "tail" pipe
+    # keeps its input open so it doesn't exit). 3. Run the app; DevTools restarts it when classes change.
+    command: >
+      sh -c "./gradlew classes --no-daemon -q &&
+             (tail -f /dev/null | ./gradlew classes --continuous --no-daemon -q &) &&
+             exec ./gradlew bootRun --no-daemon"
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    environment:
+      MOCK_VENDOR_ENABLED: "true"
+      VENDOR_API_KEY: ${VENDOR_API_KEY:-local-dev-key}
+    volumes:
+      - ./backend:/workspace/backend
+      # Keeps downloaded Gradle and dependencies between runs.
+      - gradle-cache:/root/.gradle
+
+  frontend:
+    image: node:${NODE_VERSION}-slim
+    working_dir: /workspace/frontend
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "${FRONTEND_DEV_PORT:-5173}:5173"
+    environment:
+      # Vite forwards /api calls to the backend container.
+      API_PROXY_TARGET: http://backend:8080
+      VITE_USE_POLLING: "true"
+    volumes:
+      - ./frontend:/workspace/frontend
+      # node_modules lives in a volume: it holds Linux binaries, which must not mix with your machine's files.
+      - frontend-node-modules:/workspace/frontend/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  gradle-cache:
+  frontend-node-modules:

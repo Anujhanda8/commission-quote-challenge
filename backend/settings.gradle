@@ -1,0 +1,10 @@
+// Plugin versions come from gradle.properties. They're set here because Gradle doesn't allow
+// variables in the plugins {} block of build.gradle.
+pluginManagement {
+	plugins {
+		id 'org.springframework.boot' version "${springBootVersion}"
+		id 'io.spring.dependency-management' version "${dependencyManagementVersion}"
+	}
+}
+
+rootProject.name = 'backend'
