@@ -1,1 +1,14 @@
+# Project-wide ignores. backend/.gitignore and frontend/.gitignore cover each app's build output and dependencies.
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# IDE / editor settings (when the project root is opened in an IDE)
+.idea/
+*.iml
+.vscode/
+
+# Local environment overrides (may hold real secrets, e.g. VENDOR_API_KEY). The committed .env files hold none.
+.env.local
+.env.*.local
