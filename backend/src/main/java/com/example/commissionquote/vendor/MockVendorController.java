@@ -60,7 +60,7 @@ public class MockVendorController {
 			return simulatedFailure();
 		}
 
-		BigDecimal rate = calculator.rateFor(request.riskBand(), request.loanTermInMonths());
+		BigDecimal rate = calculator.rateFor(request.riskBand());
 		BigDecimal total = calculator.totalCommission(amount, rate);
 		return ResponseEntity.ok(new VendorQuoteResponse(UUID.randomUUID().toString(), rate, total));
 	}

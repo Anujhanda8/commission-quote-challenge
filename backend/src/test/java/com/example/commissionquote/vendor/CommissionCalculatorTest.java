@@ -18,15 +18,11 @@ class CommissionCalculatorTest {
 
 	@ParameterizedTest
 	@CsvSource({
-			"LOW,    12, 1.00",
-			"MEDIUM, 12, 1.50",
-			"HIGH,   12, 2.00",
-			"LOW,    60, 1.00", // threshold itself: no adjustment
-			"LOW,    61, 1.25",
-			"MEDIUM, 360, 1.75",
-			"HIGH,   61, 2.25" })
-	void rateDependsOnRiskBandAndTerm(VendorRiskBand riskBand, int term, String expectedRate) {
-		assertThat(calculator.rateFor(riskBand, term)).isEqualByComparingTo(expectedRate);
+			"LOW,    1.00",
+			"MEDIUM, 1.50",
+			"HIGH,   2.00" })
+	void rateDependsOnRiskBandOnly(VendorRiskBand riskBand, String expectedRate) {
+		assertThat(calculator.rateFor(riskBand)).isEqualByComparingTo(expectedRate);
 	}
 
 	@Test
@@ -39,7 +35,7 @@ class CommissionCalculatorTest {
 	@Test
 	void failsAtStartupWhenARiskBandHasNoRate() {
 		MockVendorProperties.Commission incomplete = new MockVendorProperties.Commission(
-				Map.of(VendorRiskBand.LOW, BigDecimal.ONE), 60, new BigDecimal("0.25"));
+				Map.of(VendorRiskBand.LOW, BigDecimal.ONE));
 		MockVendorProperties properties = new MockVendorProperties("key", 0.0, Duration.ZERO,
 				new MockVendorProperties.Scenarios(BigDecimal.ONE, BigDecimal.TEN), incomplete);
 

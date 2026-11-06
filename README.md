@@ -45,7 +45,7 @@ The production container doesn't reload; changes show after a rebuild (hard refr
 ## Running tests
 
 Tests run as part of `docker compose build` and run in parallel (JUnit and Vitest). A failure fails the build.
-126 backend tests (unit + integration) and 71 frontend tests.
+122 backend tests (unit + integration) and 71 frontend tests.
 
 While dev mode is running:
 
@@ -82,8 +82,11 @@ VENDOR_API_KEY=some-secret docker compose up --build
 | `loanAmount`       | 1,000 – 5,000,000, at most 2 decimal places                                         |
 | `loanTermInMonths` | 1 – 360, whole months                                                               |
 | `riskBand`         | `LOW`, `MEDIUM`, `HIGH`                                                             |
-| Commission rate    | LOW 1.00%, MEDIUM 1.50%, HIGH 2.00%, +0.25% if the term is over 60 months           |
+| Commission rate    | LOW 1.00%, MEDIUM 1.50%, HIGH 2.00% (the term doesn't affect the rate)              |
 | Total commission   | `loanAmount × rate / 100`, rounded half-up to 2 decimal places                      |
+
+The brief doesn't define how the vendor calculates commission, so the rates are mock values, configured under
+`mock-vendor.commission.rates` in `application.yml`. The result shows the rate that was applied.
 
 Every field is checked in the browser (message under the field) and again on the server.
 
@@ -113,7 +116,7 @@ curl -i -X POST localhost:8080/vendor/commission-quotes -H 'Content-Type: applic
 
 | Status | Meaning                                                                                       |
 | ------ | --------------------------------------------------------------------------------------------- |
-| 200    | `{ "quoteId": "…", "commissionRate": 1.75, "totalCommission": 1750.00 }` (rate is a percentage) |
+| 200    | `{ "quoteId": "…", "commissionRate": 1.50, "totalCommission": 1500.00 }` (rate is a percentage) |
 | 400    | Invalid input                                                                                 |
 | 502    | Vendor error, or an empty / invalid quote from the vendor                                     |
 | 504    | Vendor timed out                                                                              |

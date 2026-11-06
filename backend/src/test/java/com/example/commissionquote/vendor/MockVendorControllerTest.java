@@ -18,8 +18,8 @@ class MockVendorControllerTest {
 		assertThat(response.getStatusCode().value()).isEqualTo(200);
 		VendorQuoteResponse quote = (VendorQuoteResponse) response.getBody();
 		assertThat(quote.quoteId()).isNotBlank();
-		assertThat(quote.commissionRate()).isEqualByComparingTo("1.75");
-		assertThat(quote.totalCommission()).isEqualByComparingTo("1750.00");
+		assertThat(quote.commissionRate()).isEqualByComparingTo("1.50");
+		assertThat(quote.totalCommission()).isEqualByComparingTo("1500.00");
 	}
 
 	@Test

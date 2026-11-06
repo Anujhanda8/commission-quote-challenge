@@ -24,7 +24,6 @@ public final class MockVendorPropertiesFixture {
 	public static MockVendorProperties.Commission commission() {
 		return new MockVendorProperties.Commission(
 				Map.of(VendorRiskBand.LOW, new BigDecimal("1.00"), VendorRiskBand.MEDIUM, new BigDecimal("1.50"),
-						VendorRiskBand.HIGH, new BigDecimal("2.00")),
-				60, new BigDecimal("0.25"));
+						VendorRiskBand.HIGH, new BigDecimal("2.00")));
 	}
 }

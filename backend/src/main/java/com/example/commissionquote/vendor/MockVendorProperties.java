@@ -10,7 +10,6 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -46,13 +45,8 @@ public record MockVendorProperties(
 	}
 
 	/**
-	 * @param baseRates rate (percentage) per risk band; every band must be present
-	 * @param longTermThresholdMonths terms longer than this get the adjustment
-	 * @param longTermAdjustment percentage points added for long terms
+	 * @param rates commission rate (percentage) per risk band; every band must be present
 	 */
-	public record Commission(
-			@NotEmpty Map<VendorRiskBand, BigDecimal> baseRates,
-			@PositiveOrZero int longTermThresholdMonths,
-			@NotNull BigDecimal longTermAdjustment) {
+	public record Commission(@NotEmpty Map<VendorRiskBand, BigDecimal> rates) {
 	}
 }

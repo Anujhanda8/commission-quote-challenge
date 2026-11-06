@@ -47,15 +47,13 @@ mock-vendor:
   scenarios:
     error-amount: 1001
     timeout-amount: 1002
-  # Commission rules. Rates are percentages (1.50 = 1.5%); quoted to keep the 2 decimal places.
+  # Commission rate per risk band, as a percentage (1.50 = 1.5%); quoted to keep the 2 decimal places.
+  # The brief doesn't define how the vendor calculates commission, so these are mock values.
   commission:
-    base-rates:
+    rates:
       LOW: "1.00"
       MEDIUM: "1.50"
       HIGH: "2.00"
-    # Terms longer than this many months get the long-term adjustment added to the rate.
-    long-term-threshold-months: 60
-    long-term-adjustment: "0.25"
 
 logging:
   # Console only (no log file), one line per event, in a fixed format a log service can parse:

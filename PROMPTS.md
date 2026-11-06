@@ -38,7 +38,7 @@ don't write any code yet. tell me what you understood and ask whatever you need.
 ## 3. Business rules
 
 ```
-- rate: LOW 1.00%, MEDIUM 1.50%, HIGH 2.00%, +0.25% if the term is over 60 months.
+- rate per risk band only: LOW 1.00%, MEDIUM 1.50%, HIGH 2.00%. the term doesn't affect it.
 - total = amount x rate / 100, rounded half up to 2 decimals. BigDecimal for money.
 - amount 1,000 to 5,000,000 (max 2 decimals, AUD shown in the label). term 1 to 360 whole months. quoteId is a UUID.
 - test scenarios: amount 1001 -> vendor 500 -> user gets 502. amount 1002 -> vendor waits 10s, our timeout is 5s -> 504.

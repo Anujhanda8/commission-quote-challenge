@@ -20,8 +20,9 @@ class QuoteApiIntegrationTest extends IntegrationTestBase {
 
 		assertThat(response.getStatusCode().value()).isEqualTo(200);
 		assertThat(response.getBody().get("quoteId")).isNotNull();
-		assertThat(response.getBody().get("commissionRate")).isEqualTo(1.75);
-		assertThat(response.getBody().get("totalCommission")).isEqualTo(1750.0);
+		// The term doesn't affect the rate: MEDIUM is 1.50% at any term.
+		assertThat(response.getBody().get("commissionRate")).isEqualTo(1.5);
+		assertThat(response.getBody().get("totalCommission")).isEqualTo(1500.0);
 	}
 
 	@Test
